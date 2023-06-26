@@ -6,7 +6,6 @@ using System.Net.Http.Headers;
 
 namespace ODataBookStoreWebClient.Controllers
 {
-    [Route("web/[controller]/[action]")]
     public class BookController : Controller
     {
         private readonly HttpClient client = null;
@@ -17,7 +16,7 @@ namespace ODataBookStoreWebClient.Controllers
             client = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentType);
-            ProductApiUrl = "https://localhost:7057/odata/Book";
+            ProductApiUrl = "https://localhost:7057/odata/Books";
         }
 
         public async Task<IActionResult> Index()
@@ -63,13 +62,13 @@ namespace ODataBookStoreWebClient.Controllers
                 }
             };
             return View(book);
-               
-        }
-        //public IActionResult Create(Book book)
-        //{
 
-        //    return RedirectToAction("Index");
-        //}
+        }
+        public IActionResult Create()
+        {
+
+            return View("Create");
+        }
         //[HttpPost]
         //[ValidateAntiForgeryToken]
         //public IActionResult Create(IFormCollection collection)
@@ -112,13 +111,18 @@ namespace ODataBookStoreWebClient.Controllers
                     Category = temp.Press.Category
                 }
             };
-            return View(book);
+            return View("Delete", book);
 
         }
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Delete(int id, IFormCollection collection)
-        //{
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id, IFormCollection? collection=null)
+        {
+            HttpResponseMessage response = await client.DeleteAsync(ProductApiUrl + $"/{id}");
+            var strData = response.IsSuccessStatusCode;
+            if (strData == false)
+                return View("Delete");
+            return RedirectToAction("Index");
+        }
     }
 }

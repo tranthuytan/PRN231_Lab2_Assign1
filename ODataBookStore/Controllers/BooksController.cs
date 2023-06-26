@@ -8,14 +8,14 @@ using Microsoft.AspNetCore.OData;
 
 namespace ODataBookStore.Controllers
 {
-    public class BookController : ODataController
+    public class BooksController : ODataController
     {
         private BookStoreContext _context;
-        public BookController(BookStoreContext context)
+        public BooksController(BookStoreContext context)
         {
             _context = context;
         }
-        [EnableQuery(PageSize =2)]
+        [EnableQuery(PageSize =10)]
         public IActionResult Get()
         {
             return Ok(_context.Books.Include(b=>b.Location).Include(b=>b.Press).AsQueryable());
@@ -36,7 +36,7 @@ namespace ODataBookStore.Controllers
             return Created(book);
         }
         [EnableQuery]
-        public IActionResult Delete([FromBody]int key)
+        public IActionResult Delete(int key)
         {
             Book b = _context.Books.FirstOrDefault(b => b.Id == key);
             if (b == null)

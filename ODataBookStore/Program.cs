@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<BookStoreContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BookDb")));
 //odata
 ODataConventionModelBuilder modelBuilder = new();
-modelBuilder.EntitySet<Book>("Book");
+modelBuilder.EntitySet<Book>("Books");
 modelBuilder.EntitySet<Press>("Presses");
 builder.Services.AddControllers().AddOData(option => option.AddRouteComponents("odata", modelBuilder.GetEdmModel())
         .Select()

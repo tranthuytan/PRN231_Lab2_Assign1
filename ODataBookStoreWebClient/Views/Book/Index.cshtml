@@ -39,9 +39,9 @@
                     @Html.DisplayFor(modelItem => item.ISBN)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit","Edit","web/Book",new {  id=item.Id})
-                    @Html.ActionLink("Details","Details","web/Book",new { id=item.Id})
-                    @Html.ActionLink("Delete","Delete","web/Book",new { id=item.Id})
+                    @Html.ActionLink("Edit","Edit",new {  id=item.Id})
+                    @Html.ActionLink("Details","Details",new { id=item.Id})
+                    @Html.ActionLink("Delete","Delete",new { id=item.Id})
                 </td>
             </tr>
         }
