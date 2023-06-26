@@ -15,10 +15,10 @@ namespace ODataBookStore.Controllers
         {
             _context = context;
         }
-        [EnableQuery(PageSize =10)]
+        [EnableQuery(PageSize = 10)]
         public IActionResult Get()
         {
-            return Ok(_context.Books.Include(b=>b.Location).Include(b=>b.Press).AsQueryable());
+            return Ok(_context.Books.Include(b => b.Location).Include(b => b.Press).AsQueryable());
         }
         [EnableQuery]
         public IActionResult Get(int key, string version)
@@ -31,9 +31,19 @@ namespace ODataBookStore.Controllers
         [EnableQuery]
         public IActionResult Post([FromBody] Book book)
         {
-            _context.Books.Add(book);
-            _context.SaveChanges();
-            return Created(book);
+            if (book.Id == null || book.Id==0)
+            {
+                _context.Books.Add(book);
+                _context.SaveChanges();
+                return Created(book);
+            }
+            else
+            {
+                _context.Books.Update(book);
+                _context.SaveChanges();
+                return Updated(book);   
+            }
+                
         }
         [EnableQuery]
         public IActionResult Delete(int key)

@@ -21,6 +21,10 @@ builder.Services.AddControllers().AddOData(option => option.AddRouteComponents("
         .SetMaxTop(20)
         .Count()
         .Expand());
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder => builder.AllowAnyHeader().AllowAnyOrigin().AllowAnyHeader());
+});
 
 builder.Services.AddMvc(options => options.EnableEndpointRouting=false);
 
@@ -41,6 +45,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseODataBatching();
 app.UseRouting();
+app.UseCors();  
 app.UseMvc(routes =>
 {
     routes.MapRoute(

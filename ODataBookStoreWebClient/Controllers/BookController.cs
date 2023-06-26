@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ODataBookStore.Models;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace ODataBookStoreWebClient.Controllers
 {
@@ -21,7 +23,7 @@ namespace ODataBookStoreWebClient.Controllers
 
         public async Task<IActionResult> Index()
         {
-            HttpResponseMessage response = await client.GetAsync(ProductApiUrl);
+            HttpResponseMessage response = await client.GetAsync(ProductApiUrl + $"?$expand=Location,Press");
             string strData = await response.Content.ReadAsStringAsync();
             dynamic temp = JObject.Parse(strData);
             var list = temp.value;
@@ -31,7 +33,9 @@ namespace ODataBookStoreWebClient.Controllers
                 Author = (string)x["Author"],
                 ISBN = (string)x["ISBN"],
                 Title = (string)x["Title"],
-                Price = (decimal)x["Price"]
+                Price = (decimal)x["Price"],
+                LocationName = (string)x["LocationName"],
+                Press = new Press { Id = (int)x["Press"]["Id"], Name = (string)x["Press"]["Name"] }
             }).ToList();
             return View(items);
         }
@@ -66,25 +70,53 @@ namespace ODataBookStoreWebClient.Controllers
         }
         public IActionResult Create()
         {
-
-            return View("Create");
+            return View();
         }
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult Create(IFormCollection collection)
-        //{
 
-        //}
-        //public IActionResult Edit(int id)
-        //{
+        [HttpPost]
+        public async Task<IActionResult> Create(Book book)
+        {
+            HttpResponseMessage response = await client.PostAsJsonAsync<Book>(ProductApiUrl, book);
 
-        //}
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult Edit(int id, IFormCollection collection)
-        //{
+            return RedirectToAction("Index");
+        }
+        public async Task<IActionResult> Edit(int id)
+        {
+            HttpResponseMessage response = await client.GetAsync(ProductApiUrl + $"/{id}?$expand=Location,Press");
+            string strData = await response.Content.ReadAsStringAsync();
+            dynamic temp = JObject.Parse(strData);
+            Book book = new Book
+            {
+                Id = temp.Id,
+                ISBN = temp.ISBN,
+                Title = temp.Title,
+                Author = temp.Author,
+                Price = temp.Price,
+                LocationName = temp.LocationName,
+                PressId = temp.PressId,
+                Location = new Address
+                {
+                    City = temp.Location.City,
+                    Street = temp.Location.Street
+                },
+                Press = new Press
+                {
+                    Id = temp.Press.Id,
+                    Name = temp.Press.Name,
+                    Category = temp.Press.Category
+                }
+            };
+            return View("Edit", book);
 
-        //}
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(Book book)
+        {
+            HttpResponseMessage response = await client.PostAsJsonAsync<Book>(ProductApiUrl, book);
+            if (response.IsSuccessStatusCode)
+                return RedirectToAction("Index");
+            return View();
+        }
         public async Task<IActionResult> Delete(int id)
         {
             HttpResponseMessage response = await client.GetAsync(ProductApiUrl + $"/{id}?$expand=Location,Press");

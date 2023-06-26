@@ -22,6 +22,15 @@
             <th>
                 @Html.DisplayNameFor(model=>model.ISBN)
             </th>
+            <th>
+                @Html.DisplayNameFor(model=>model.LocationName)
+            </th>
+            <th>
+                Press Name
+            </th>
+            <th>
+                @Html.DisplayNameFor(model=>model.Price)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -37,6 +46,15 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ISBN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LocationName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Press.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
                 </td>
                 <td>
                     @Html.ActionLink("Edit","Edit",new {  id=item.Id})
