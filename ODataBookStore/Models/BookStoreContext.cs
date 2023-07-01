@@ -9,6 +9,7 @@ namespace ODataBookStore.Models
         }
         public DbSet<Book> Books { get; set; }
         public DbSet<Press> Presses { get;set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
@@ -101,6 +102,25 @@ namespace ODataBookStore.Models
                         Price = 159.99m,
                         LocationName = "Quy Nhon City", 
                         PressId =  3
+                    }
+                    );
+            mb.Entity<User>()
+                .HasData(
+                    new User
+                    {
+                        Id = 1,
+                        Name = "Ad Văn Min",
+                        Username = "admin",
+                        Password = "admin",
+                        Role = Role.Admin
+                    },
+                    new User
+                    {
+                        Id = 2,
+                        Name = "Cú Tòm Mơ",
+                        Username = "customer",
+                        Password = "customer",
+                        Role = Role.Customer
                     }
                     );
         }

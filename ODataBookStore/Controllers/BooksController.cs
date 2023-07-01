@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.EntityFrameworkCore;
 using ODataBookStore.Models;
 using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ODataBookStore.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BooksController : ODataController
     {
         private BookStoreContext _context;

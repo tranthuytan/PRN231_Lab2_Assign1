@@ -19,10 +19,22 @@ namespace ODataBookStoreWebClient.Controllers
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentType);
             ProductApiUrl = "https://localhost:7057/odata/Books";
+
+            ////get jwt
+            //var jwt = TempData["jwt"];
+            //if (TempData["jwt"] != null)
+            //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TempData["jwt"].ToString());
+        }
+
+        private void GetJwt()
+        {
+            var jwtToken = HttpContext.Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",jwtToken.ToString());
         }
 
         public async Task<IActionResult> Index()
         {
+            GetJwt();
             HttpResponseMessage response = await client.GetAsync(ProductApiUrl + $"?$expand=Location,Press");
             string strData = await response.Content.ReadAsStringAsync();
             dynamic temp = JObject.Parse(strData);
@@ -41,6 +53,7 @@ namespace ODataBookStoreWebClient.Controllers
         }
         public async Task<IActionResult> Details(int id)
         {
+            GetJwt();
             HttpResponseMessage response = await client.GetAsync(ProductApiUrl + $"/{id}?$expand=Location,Press");
             string strData = await response.Content.ReadAsStringAsync();
             dynamic temp = JObject.Parse(strData);
@@ -76,12 +89,14 @@ namespace ODataBookStoreWebClient.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Book book)
         {
+            GetJwt();
             HttpResponseMessage response = await client.PostAsJsonAsync<Book>(ProductApiUrl, book);
 
             return RedirectToAction("Index");
         }
         public async Task<IActionResult> Edit(int id)
         {
+            GetJwt();
             HttpResponseMessage response = await client.GetAsync(ProductApiUrl + $"/{id}?$expand=Location,Press");
             string strData = await response.Content.ReadAsStringAsync();
             dynamic temp = JObject.Parse(strData);
@@ -112,6 +127,7 @@ namespace ODataBookStoreWebClient.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(Book book)
         {
+            GetJwt();
             HttpResponseMessage response = await client.PostAsJsonAsync<Book>(ProductApiUrl, book);
             if (response.IsSuccessStatusCode)
                 return RedirectToAction("Index");
@@ -119,6 +135,7 @@ namespace ODataBookStoreWebClient.Controllers
         }
         public async Task<IActionResult> Delete(int id)
         {
+            GetJwt();
             HttpResponseMessage response = await client.GetAsync(ProductApiUrl + $"/{id}?$expand=Location,Press");
             string strData = await response.Content.ReadAsStringAsync();
             dynamic temp = JObject.Parse(strData);
@@ -150,6 +167,7 @@ namespace ODataBookStoreWebClient.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id, IFormCollection? collection=null)
         {
+            GetJwt();
             HttpResponseMessage response = await client.DeleteAsync(ProductApiUrl + $"/{id}");
             var strData = response.IsSuccessStatusCode;
             if (strData == false)

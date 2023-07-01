@@ -18,10 +18,16 @@ namespace ODataBookStoreWebClient.Controllers
             client.DefaultRequestHeaders.Accept.Add(contentType);
             ProductApiUrl = "https://localhost:7057/odata/Book";
         }
+        private void GetJwt()
+        {
+            var jwtToken = HttpContext.Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken.ToString());
+        }
 
         //GET: Book Controller
         public async Task<IActionResult> Index()
         {
+            GetJwt();
             HttpResponseMessage response = await client.GetAsync(ProductApiUrl);
             string strData = await response.Content.ReadAsStringAsync();
             dynamic temp = JObject.Parse(strData);

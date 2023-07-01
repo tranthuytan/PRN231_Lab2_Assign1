@@ -5,6 +5,11 @@
 @{
     ViewData["Title"] = "Index";
 }
+<script>
+    var jwtToken = '@TempData["jwt"]';
+    if (jwtToken!=null)
+        localStorage.setItem("jwt",jwtToken);
+</script>
 <h1>Book List</h1>
 <p>
     <a asp-action="Create">Create New</a>
